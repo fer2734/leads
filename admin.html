@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Stock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; padding-bottom: 90px; }
+        /* ... (Copia los mismos estilos CSS que tenías antes para tarjetas, modal, etc) ... */
+        .car-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 12px; position: relative; margin-bottom: 12px; display: flex; gap: 12px; align-items: start; }
+        .img-box { width: 85px; height: 85px; border-radius: 12px; flex-shrink: 0; overflow: hidden; background: #334155; position: relative; }
+        .thumb { width: 100%; height: 100%; object-fit: cover; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; justify-content: center; align-items: center; }
+        .modal.open { display: flex; }
+        .modal-content { background: #1e293b; width: 90%; max-width: 400px; padding: 20px; border-radius: 12px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div id="loginOverlay" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center p-4">
+        <h2 class="text-2xl font-bold text-white mb-4">Acceso Admin</h2>
+        <input type="password" id="passInput" class="w-full max-w-xs bg-slate-800 border border-slate-700 p-3 rounded text-white text-center tracking-widest" placeholder="••••">
+        <button onclick="checkLogin()" class="mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold w-full max-w-xs">ENTRAR</button>
+    </div>
+
+    <div id="appContent" class="hidden">
+        <header class="p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+            <h1 class="text-xl font-bold text-white">Gestión Stock</h1>
+            <div class="mt-2 flex gap-2 overflow-x-auto pb-2">
+                <button onclick="filterBy('all')" class="bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white">Todos</button>
+                <button onclick="filterBy('AUTOPARQUE')" class="bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white">Stock</button>
+            </div>
+        </header>
+
+        <main id="grid" class="p-4 grid gap-4 max-w-md mx-auto pb-24"></main>
+        
+        <button onclick="document.getElementById('addModal').classList.add('open')" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 rounded-full text-white text-2xl shadow-lg z-40 flex items-center justify-center">+</button>
+    </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-white font-bold mb-4">Agregar Auto</h3>
+            <input id="inModel" class="w-full bg-slate-800 p-2 rounded mb-2 text-white" placeholder="Modelo">
+            <input id="inPrice" class="w-full bg-slate-800 p-2 rounded mb-2 text-white" placeholder="Precio">
+            <input id="inKms" class="w-full bg-slate-800 p-2 rounded mb-2 text-white" placeholder="Kms">
+            <input type="file" id="inPhoto" class="mb-4 text-white text-xs">
+            <button onclick="submitNewCar()" class="w-full bg-blue-600 p-3 rounded text-white font-bold">GUARDAR</button>
+            <button onclick="document.getElementById('addModal').classList.remove('open')" class="w-full mt-2 text-slate-500 text-xs">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // === CONFIGURACIÓN DIRECTA ===
+        const GOOGLE_SCRIPT_URL = "PEGAR_AQUI_TU_NUEVA_URL_DE_APPS_SCRIPT"; 
+        const IMGBB_KEY = "PEGAR_AQUI_TU_API_KEY_DE_IMGBB"; 
+        const CSV_ID = "1-qs4Rs6VcJcwmBCB1tR5OsxsYQ2hcknMwFEmmMZfr70"; // Tu ID de hoja
+        const CSV_URL = `https://docs.google.com/spreadsheets/d/${CSV_ID}/export?format=csv`;
+
+        let inventory = [];
+
+        // LOGIN (Guardamos la clave en el navegador para enviarla a Google)
+        function checkLogin() {
+            const pass = document.getElementById('passInput').value;
+            // No verificamos aqui. Guardamos y probamos al cargar datos.
+            localStorage.setItem('rg_admin_pass', pass);
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('appContent').classList.remove('hidden');
+            loadData();
+        }
+
+        async function loadData() {
+            const res = await fetch(CSV_URL + '&t=' + Date.now());
+            const text = await res.text();
+            inventory = parseCSV(text);
+            render(inventory);
+        }
+
+        function parseCSV(csv) {
+            // (Misma función de parseo que tenías antes)
+            const rows = csv.split(/\r?\n/).slice(1).filter(r => r.trim() !== '');
+            return rows.map(r => {
+                const p = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+                return { model: p[0], price: p[1], plate: p[2], kms: p[3], status: p[4], photo: p[5] };
+            });
+        }
+
+        function render(data) {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            data.forEach(c => {
+                grid.innerHTML += `
+                    <div class="car-card text-white">
+                        <div class="img-box"><img src="${c.photo || ''}" class="thumb"></div>
+                        <div>
+                            <h3 class="font-bold">${c.model}</h3>
+                            <p class="text-xs text-slate-400">${c.kms} km • ${c.price}</p>
+                            <span class="text-xs bg-slate-800 px-2 rounded border border-slate-600">${c.status}</span>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // FUNCIONES DE ENVÍO (DIRECTO A GOOGLE CON PASSWORD)
+        async function submitNewCar() {
+            const pass = localStorage.getItem('rg_admin_pass');
+            const model = document.getElementById('inModel').value;
+            // ... obtener resto de inputs ...
+
+            // Subir Foto a ImgBB
+            let photoUrl = "";
+            const fileInput = document.getElementById('inPhoto');
+            if(fileInput.files[0]) {
+                const formData = new FormData();
+                formData.append("image", fileInput.files[0]);
+                const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:'POST', body:formData});
+                const imgData = await imgRes.json();
+                if(imgData.success) photoUrl = imgData.data.url;
+            }
+
+            // Enviar a Google
+            const payload = {
+                action: "add",
+                password: pass, // <--- ENVIAMOS LA CLAVE AQUI
+                model: model,
+                price: document.getElementById('inPrice').value,
+                kms: document.getElementById('inKms').value,
+                status: "AUTOPARQUE",
+                photoUrl: photoUrl
+            };
+
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST', mode: 'no-cors', // no-cors es importante para Google directo
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            alert("Enviado. Espera unos segundos y recarga.");
+            document.getElementById('addModal').classList.remove('open');
+        }
+
+        if(localStorage.getItem('rg_admin_pass')) checkLogin();
+    </script>
+</body>
+</html>

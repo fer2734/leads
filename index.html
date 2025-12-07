@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>RG Catálogo</title>
+</head>
+<body>
+    <script>
+        // CONFIGURACIÓN PARA GITHUB
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZgu2QFrf0fYXR71ByGbQ9F1uuyUlnoM9FSB1x7yIrBQFM5JmA-dHtJlOlr71TqdGu5A/exec"; 
+        const CSV_ID = "1-qs4Rs6VcJcwmBCB1tR5OsxsYQ2hcknMwFEmmMZfr70";
+        const CSV_URL = `https://docs.google.com/spreadsheets/d/${CSV_ID}/export?format=csv`;
+        const WHATSAPP_NUM = "5491100000000"; 
+
+        // ... (Funciones loadData, render, trackView igual que antes) ...
+
+        async function submitLead() {
+            // ... (Obtener valores del form) ...
+            const name = document.getElementById('leadName').value;
+            // ... etc ...
+
+            // ENVIAR A GOOGLE DIRECTO (Sin password, porque saveLead es público en el script)
+            const payload = {
+                action: "saveLead",
+                name: name,
+                interestedIn: selectedCar,
+                capital: capital,
+                tradeIn: tradeIn,
+                quota: quota,
+                history: history
+            };
+
+            // Usamos mode: 'no-cors' para enviar datos a Google desde GitHub Pages
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+            } catch(e) { console.log(e); }
+
+            // Redirigir WhatsApp...
+            window.location.href = `https://wa.me/${WHATSAPP_NUM}?text=...`;
+        }
+    </script>
+</body>
+</html>

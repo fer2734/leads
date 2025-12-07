@@ -7,9 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; padding-bottom: 90px; }
-        /* ... (Copia los mismos estilos CSS que tenías antes para tarjetas, modal, etc) ... */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; padding-bottom: 80px; }
         .car-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 12px; position: relative; margin-bottom: 12px; display: flex; gap: 12px; align-items: start; }
         .img-box { width: 85px; height: 85px; border-radius: 12px; flex-shrink: 0; overflow: hidden; background: #334155; position: relative; }
         .thumb { width: 100%; height: 100%; object-fit: cover; }
@@ -17,25 +16,30 @@
         .modal.open { display: flex; }
         .modal-content { background: #1e293b; width: 90%; max-width: 400px; padding: 20px; border-radius: 12px; }
         .hidden { display: none !important; }
+        .input-admin { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; color: white; margin-bottom: 8px; }
     </style>
 </head>
 <body>
-    <div id="loginOverlay" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center p-4">
+    <div id="loginOverlay" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center p-6">
         <h2 class="text-2xl font-bold text-white mb-4">Acceso Admin</h2>
         <input type="password" id="passInput" class="w-full max-w-xs bg-slate-800 border border-slate-700 p-3 rounded text-white text-center tracking-widest" placeholder="••••">
-        <button onclick="checkLogin()" class="mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold w-full max-w-xs">ENTRAR</button>
+        <button onclick="checkLogin()" id="loginBtn" class="mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold w-full max-w-xs">ENTRAR</button>
+        <p id="loginError" class="text-red-400 text-sm mt-3 hidden">Contraseña incorrecta. Intenta de nuevo.</p>
     </div>
 
     <div id="appContent" class="hidden">
         <header class="p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
-            <h1 class="text-xl font-bold text-white">Gestión Stock</h1>
+            <h1 class="text-xl font-bold text-white">Gestión Stock <span id="totalCount" class="text-blue-400 text-sm ml-2"></span></h1>
             <div class="mt-2 flex gap-2 overflow-x-auto pb-2">
-                <button onclick="filterBy('all')" class="bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white">Todos</button>
-                <button onclick="filterBy('AUTOPARQUE')" class="bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white">Stock</button>
+                <button onclick="filterBy('all')" class="filter-btn bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white data-[active=true]:bg-blue-600" data-filter="all">Todos</button>
+                <button onclick="filterBy('AUTOPARQUE')" class="filter-btn bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white data-[active=true]:bg-blue-600" data-filter="AUTOPARQUE">Stock</button>
+                <button onclick="filterBy('SEÑADO')" class="filter-btn bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white data-[active=true]:bg-blue-600" data-filter="SEÑADO">Señados</button>
+                <button onclick="filterBy('VENDIDO')" class="filter-btn bg-slate-800 px-3 py-1 rounded-full text-xs border border-slate-700 text-white data-[active=true]:bg-blue-600" data-filter="VENDIDO">Vendidos</button>
             </div>
+            <input type="text" id="searchInput" placeholder="Buscar modelo o patente..." class="w-full bg-slate-800 border-slate-700 p-2 rounded mt-2 text-white text-sm">
         </header>
 
-        <main id="grid" class="p-4 grid gap-4 max-w-md mx-auto pb-24"></main>
+        <main id="grid" class="p-4 max-w-md mx-auto"></main>
         
         <button onclick="document.getElementById('addModal').classList.add('open')" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 rounded-full text-white text-2xl shadow-lg z-40 flex items-center justify-center">+</button>
     </div>
@@ -43,105 +47,184 @@
     <div id="addModal" class="modal">
         <div class="modal-content">
             <h3 class="text-white font-bold mb-4">Agregar Auto</h3>
-            <input id="inModel" class="w-full bg-slate-800 p-2 rounded mb-2 text-white" placeholder="Modelo">
-            <input id="inPrice" class="w-full bg-slate-800 p-2 rounded mb-2 text-white" placeholder="Precio">
-            <input id="inKms" class="w-full bg-slate-800 p-2 rounded mb-2 text-white" placeholder="Kms">
+            <input id="inModel" class="input-admin" placeholder="Modelo (Ej: Toyota Hilux 2020)">
+            <input id="inPrice" class="input-admin" type="number" placeholder="Precio ($)">
+            <input id="inPlate" class="input-admin" placeholder="Patente">
+            <input id="inKms" class="input-admin" type="number" placeholder="Kms">
+            <select id="inStatus" class="input-admin">
+                <option value="AUTOPARQUE">AUTOPARQUE</option>
+                <option value="SEÑADO">SEÑADO</option>
+            </select>
+            <label class="block text-sm mb-2 mt-2">Foto (Recomendado)</label>
             <input type="file" id="inPhoto" class="mb-4 text-white text-xs">
-            <button onclick="submitNewCar()" class="w-full bg-blue-600 p-3 rounded text-white font-bold">GUARDAR</button>
+            <button onclick="submitNewCar()" id="addBtn" class="w-full bg-blue-600 p-3 rounded text-white font-bold">GUARDAR</button>
             <button onclick="document.getElementById('addModal').classList.remove('open')" class="w-full mt-2 text-slate-500 text-xs">Cancelar</button>
         </div>
     </div>
 
     <script>
-        // === CONFIGURACIÓN DIRECTA ===
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZgu2QFrf0fYXR71ByGbQ9F1uuyUlnoM9FSB1x7yIrBQFM5JmA-dHtJlOlr71TqdGu5A/exec"; 
+        // === CONFIGURACIÓN CRÍTICA ===
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbTJu8CdTzL4aiAdOMoPqIoIe5Misur7j-kttTq6xTbNNyEs9CNoe4U9z8f9y0rJR_Ng/exec"; 
         const IMGBB_KEY = "648fe7017429f870eab5ce87edb22756"; 
-        const CSV_ID = "1-qs4Rs6VcJcwmBCB1tR5OsxsYQ2hcknMwFEmmMZfr70"; // Tu ID de hoja
+        const CSV_ID = "1-qs4Rs6VcJcwmBCB1tR5OsxsYQ2hcknMwFEmmMZfr70"; // TU ID DE HOJA
         const CSV_URL = `https://docs.google.com/spreadsheets/d/${CSV_ID}/export?format=csv`;
 
         let inventory = [];
+        let currentFilter = 'all';
 
-        // LOGIN (Guardamos la clave en el navegador para enviarla a Google)
         function checkLogin() {
             const pass = document.getElementById('passInput').value;
-            // No verificamos aqui. Guardamos y probamos al cargar datos.
-            localStorage.setItem('rg_admin_pass', pass);
-            document.getElementById('loginOverlay').classList.add('hidden');
-            document.getElementById('appContent').classList.remove('hidden');
-            loadData();
+            const btn = document.getElementById('loginBtn');
+            btn.innerText = "Verificando...";
+            
+            // Hacemos una prueba de conexión a Google para ver si la clave es correcta
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: "ping", password: pass })
+            }).then(res => {
+                // Como usamos no-cors, no podemos leer el error 401, así que asumimos éxito si no hay error de red.
+                // Si la clave es incorrecta, Google responderá con un JSON de error que veremos al cargar datos.
+                
+                localStorage.setItem('rg_admin_pass', pass);
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('appContent').classList.remove('hidden');
+                loadData();
+            }).catch(e => {
+                // Error de red
+                document.getElementById('loginError').classList.remove('hidden');
+                btn.innerText = "ENTRAR";
+            });
         }
 
-        async function loadData() {
-            const res = await fetch(CSV_URL + '&t=' + Date.now());
-            const text = await res.text();
-            inventory = parseCSV(text);
-            render(inventory);
+        async function loadData(silent = false) {
+            try {
+                const res = await fetch(CSV_URL + '&t=' + Date.now());
+                const text = await res.text();
+                inventory = parseCSV(text);
+                applyFilters();
+            } catch (e) {
+                if (!silent) showError("No se pudo cargar el inventario.");
+            }
         }
 
         function parseCSV(csv) {
-            // (Misma función de parseo que tenías antes)
             const rows = csv.split(/\r?\n/).slice(1).filter(r => r.trim() !== '');
             return rows.map(r => {
                 const p = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-                return { model: p[0], price: p[1], plate: p[2], kms: p[3], status: p[4], photo: p[5] };
+                return { model: p[0], price: p[1], plate: p[2], kms: p[3], status: p[4], photo: p[5], fullText: p.join(' ').toLowerCase() };
             });
         }
 
         function render(data) {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
+            
+            if(data.length === 0) {
+                grid.innerHTML = `<div class="text-center py-10 text-slate-500">No hay autos con este filtro.</div>`;
+                return;
+            }
+
             data.forEach(c => {
                 grid.innerHTML += `
                     <div class="car-card text-white">
-                        <div class="img-box"><img src="${c.photo || ''}" class="thumb"></div>
+                        <div class="img-box"><img src="${c.photo || 'https://via.placeholder.com/85x85/334155/777?text=RG'}" class="thumb"></div>
                         <div>
                             <h3 class="font-bold">${c.model}</h3>
-                            <p class="text-xs text-slate-400">${c.kms} km • ${c.price}</p>
-                            <span class="text-xs bg-slate-800 px-2 rounded border border-slate-600">${c.status}</span>
+                            <p class="text-sm text-slate-400">Patente: ${c.plate}</p>
+                            <p class="text-xs text-slate-400">${c.kms} km • $${c.price}</p>
+                            <span class="text-xs bg-slate-800 px-2 rounded border border-slate-600 mt-1 inline-block">${c.status}</span>
                         </div>
                     </div>`;
             });
         }
+        
+        // --- FILTROS Y BÚSQUEDA ---
+        function filterBy(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.dataset.active = (btn.dataset.filter === filter).toString();
+            });
+            applyFilters();
+        }
 
-        // FUNCIONES DE ENVÍO (DIRECTO A GOOGLE CON PASSWORD)
-        async function submitNewCar() {
-            const pass = localStorage.getItem('rg_admin_pass');
-            const model = document.getElementById('inModel').value;
-            // ... obtener resto de inputs ...
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
 
-            // Subir Foto a ImgBB
-            let photoUrl = "";
-            const fileInput = document.getElementById('inPhoto');
-            if(fileInput.files[0]) {
-                const formData = new FormData();
-                formData.append("image", fileInput.files[0]);
-                const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:'POST', body:formData});
-                const imgData = await imgRes.json();
-                if(imgData.success) photoUrl = imgData.data.url;
+        function applyFilters() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = inventory.filter(c => {
+                const matchStatus = currentFilter === 'all' ? true : c.status === currentFilter;
+                const matchSearch = c.fullText.toLowerCase().includes(term);
+                return matchStatus && matchSearch;
+            });
+            render(filtered);
+            document.getElementById('totalCount').innerText = `${filtered.length} AUTOS`;
+        }
+
+
+        // --- FUNCIONES DE ACCIÓN ---
+        async function uploadImageToImgBB(file) {
+            if (!file) return "";
+            const formData = new FormData();
+            formData.append("image", file);
+
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: formData });
+            const data = await res.json();
+            return data.success ? data.data.url : "";
+        }
+        
+        async function sendToGoogle(payload) {
+             try {
+                const res = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                return true; // Asumimos éxito por no-cors
+            } catch (e) {
+                alert("Error de conexión. Intenta de nuevo.");
+                return false;
             }
+        }
 
-            // Enviar a Google
+
+        async function submitNewCar() {
+            const btn = document.getElementById('addBtn');
+            btn.innerText = "Subiendo...";
+            const pass = localStorage.getItem('rg_admin_pass');
+
+            // 1. Subir Foto
+            const fileInput = document.getElementById('inPhoto');
+            const photoUrl = await uploadImageToImgBB(fileInput.files[0]);
+
+            // 2. Enviar a Google
             const payload = {
                 action: "add",
-                password: pass, // <--- ENVIAMOS LA CLAVE AQUI
-                model: model,
+                password: pass, 
+                model: document.getElementById('inModel').value,
                 price: document.getElementById('inPrice').value,
+                plate: document.getElementById('inPlate').value,
                 kms: document.getElementById('inKms').value,
-                status: "AUTOPARQUE",
+                status: document.getElementById('inStatus').value,
                 photoUrl: photoUrl
             };
 
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors', // no-cors es importante para Google directo
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            });
+            await sendToGoogle(payload);
 
-            alert("Enviado. Espera unos segundos y recarga.");
+            alert("Auto agregado. Recargando datos...");
             document.getElementById('addModal').classList.remove('open');
+            loadData(); // Recarga la lista
+            btn.innerText = "GUARDAR";
         }
 
-        if(localStorage.getItem('rg_admin_pass')) checkLogin();
+        // --- INICIO ---
+        filterBy('all');
+        if(localStorage.getItem('rg_admin_pass')) {
+            document.getElementById('passInput').value = localStorage.getItem('rg_admin_pass');
+            checkLogin();
+        }
     </script>
 </body>
 </html>

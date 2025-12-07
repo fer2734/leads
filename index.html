@@ -11,22 +11,32 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .step-hidden { display: none; }
         .step-active { display: block; }
+        /* Evita que llave x llave se rompa */
+        .no-break { white-space: nowrap; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800">
+<body class="bg-gray-100 font-sans text-gray-800 pb-10">
 
-    <header class="bg-slate-900 text-white p-6 shadow-md text-center">
-        <h1 class="text-3xl font-bold tracking-wider text-yellow-500 uppercase">RG Automotores</h1>
+    <header class="bg-slate-900 text-white p-4 shadow-md text-center">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-wider text-yellow-500 uppercase whitespace-nowrap">RG Automotores</h1>
+        
         <p class="text-sm mt-1"><i class="fas fa-map-marker-alt text-red-500"></i> Italia 1571</p>
-        <div class="mt-3 text-xs md:text-sm font-light text-gray-300 space-x-2">
+        
+        <div class="mt-3 flex flex-wrap justify-center gap-2 text-[11px] md:text-sm font-light text-gray-300">
             <span class="bg-slate-800 px-2 py-1 rounded">Contado</span>
             <span class="bg-slate-800 px-2 py-1 rounded">Planes</span>
             <span class="bg-slate-800 px-2 py-1 rounded">Financiación</span>
-            <span class="bg-slate-800 px-2 py-1 rounded border border-yellow-500 text-yellow-500">Llave x Llave</span>
+            <span class="bg-slate-800 px-2 py-1 rounded border border-yellow-500 text-yellow-500 whitespace-nowrap">Llave x Llave</span>
+        </div>
+
+        <div class="mt-4">
+            <a href="https://wa.me/5492984572959" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2 px-4 rounded-full transition shadow-lg">
+                <i class="fab fa-whatsapp text-lg"></i> Contáctame al WhatsApp
+            </a>
         </div>
     </header>
 
-    <main class="max-w-lg mx-auto mt-8 p-4">
+    <main class="max-w-lg mx-auto mt-6 p-4">
         <div class="w-full bg-gray-300 rounded-full h-2.5 mb-6">
             <div id="progressBar" class="bg-yellow-500 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
         </div>
@@ -35,16 +45,19 @@
             <form id="carForm">
                 
                 <div id="step1" class="step-active">
-                    <h2 class="text-xl font-bold mb-4">Empecemos por tu contacto</h2>
-                    <p class="text-sm text-gray-500 mb-4">Déjanos tu WhatsApp para enviarte las opciones.</p>
+                    <h2 class="text-xl font-bold mb-2">Comencemos tu búsqueda</h2>
                     
-                    <label class="block mb-2 text-sm font-bold">Nombre Completo</label>
-                    <input type="text" id="nombre" class="w-full p-3 border rounded mb-4 focus:outline-none focus:border-yellow-500" placeholder="Ej: Juan Pérez">
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-5 text-sm text-blue-800">
+                        <p>👋 Hola! Completá este formulario para que entendamos qué estás buscando. Así podremos revisar nuestro stock y enviarte <strong>opciones personalizadas</strong> directo a tu WhatsApp.</p>
+                    </div>
                     
-                    <label class="block mb-2 text-sm font-bold">Teléfono / WhatsApp</label>
-                    <input type="tel" id="telefono" class="w-full p-3 border rounded mb-6 focus:outline-none focus:border-yellow-500" placeholder="Ej: 2984...">
+                    <label class="block mb-2 text-sm font-bold text-gray-700">Nombre Completo</label>
+                    <input type="text" id="nombre" class="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="Ej: Juan Pérez">
                     
-                    <button type="button" onclick="nextStep(2)" class="w-full bg-slate-900 text-white py-3 rounded hover:bg-slate-800 transition font-bold">Siguiente <i class="fas fa-arrow-right ml-2"></i></button>
+                    <label class="block mb-2 text-sm font-bold text-gray-700">Teléfono / WhatsApp</label>
+                    <input type="tel" id="telefono" class="w-full p-3 border border-gray-300 rounded mb-6 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="Ej: 2984...">
+                    
+                    <button type="button" onclick="nextStep(2)" class="w-full bg-slate-900 text-white py-3 rounded hover:bg-slate-800 transition font-bold shadow-md">Siguiente <i class="fas fa-arrow-right ml-2"></i></button>
                 </div>
 
                 <div id="step2" class="step-hidden">
@@ -60,6 +73,8 @@
                         <option value="Fiat">Fiat</option>
                         <option value="Renault">Renault</option>
                         <option value="Peugeot">Peugeot</option>
+                        <option value="Citroen">Citroën</option>
+                        <option value="Nissan">Nissan</option>
                         <option value="Otro">Otro</option>
                     </select>
 
@@ -73,8 +88,8 @@
                     <input type="number" id="capital" class="w-full p-3 border rounded mb-6" placeholder="$">
 
                     <div class="flex gap-2">
-                        <button type="button" onclick="prevStep(1)" class="w-1/3 bg-gray-300 text-gray-700 py-3 rounded font-bold">Volver</button>
-                        <button type="button" onclick="nextStep(3)" class="w-2/3 bg-slate-900 text-white py-3 rounded font-bold">Siguiente</button>
+                        <button type="button" onclick="prevStep(1)" class="w-1/3 bg-gray-200 text-gray-700 py-3 rounded font-bold hover:bg-gray-300">Volver</button>
+                        <button type="button" onclick="nextStep(3)" class="w-2/3 bg-slate-900 text-white py-3 rounded font-bold hover:bg-slate-800">Siguiente</button>
                     </div>
                 </div>
 
@@ -82,58 +97,59 @@
                     <h2 class="text-xl font-bold mb-4">¿Tienes un usado para entregar?</h2>
                     
                     <div class="flex justify-center mb-6 gap-4">
-                        <label class="cursor-pointer border-2 border-gray-200 rounded-lg p-4 hover:border-yellow-500 w-1/2 text-center has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50">
+                        <label class="cursor-pointer border-2 border-gray-200 rounded-lg p-3 hover:border-yellow-500 w-1/2 text-center has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
                             <input type="radio" name="tieneUsado" value="Si" class="hidden" onchange="toggleUsado(true)">
-                            <i class="fas fa-car text-2xl mb-2 text-slate-700"></i><br>Sí, tengo
+                            <i class="fas fa-car text-2xl mb-2 text-slate-700"></i><br><span class="text-sm font-bold">Sí, tengo</span>
                         </label>
-                        <label class="cursor-pointer border-2 border-gray-200 rounded-lg p-4 hover:border-yellow-500 w-1/2 text-center has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50">
+                        <label class="cursor-pointer border-2 border-gray-200 rounded-lg p-3 hover:border-yellow-500 w-1/2 text-center has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50 transition">
                             <input type="radio" name="tieneUsado" value="No" class="hidden" onchange="toggleUsado(false)">
-                            <i class="fas fa-times-circle text-2xl mb-2 text-slate-700"></i><br>No, solo efectivo
+                            <i class="fas fa-money-bill-wave text-2xl mb-2 text-slate-700"></i><br><span class="text-sm font-bold">No, efectivo</span>
                         </label>
                     </div>
 
-                    <div id="datosUsado" class="hidden fade-in">
-                        <label class="block mb-2 text-sm font-bold">Modelo de tu auto</label>
-                        <input type="text" id="modeloUsado" class="w-full p-3 border rounded mb-4" placeholder="Ej: Fiat Cronos 1.3">
+                    <div id="datosUsado" class="hidden fade-in bg-gray-50 p-4 rounded mb-4 border border-gray-200">
+                        <h3 class="text-sm font-bold text-yellow-600 mb-3 uppercase">Datos de tu vehículo</h3>
+                        <label class="block mb-1 text-xs font-bold text-gray-500">Modelo</label>
+                        <input type="text" id="modeloUsado" class="w-full p-2 border rounded mb-3 text-sm" placeholder="Ej: Fiat Cronos 1.3">
                         
                         <div class="flex gap-2">
                             <div class="w-1/2">
-                                <label class="block mb-2 text-sm font-bold">Año</label>
-                                <input type="number" id="anioUsado" class="w-full p-3 border rounded mb-4">
+                                <label class="block mb-1 text-xs font-bold text-gray-500">Año</label>
+                                <input type="number" id="anioUsado" class="w-full p-2 border rounded mb-2 text-sm">
                             </div>
                             <div class="w-1/2">
-                                <label class="block mb-2 text-sm font-bold">Kilómetros</label>
-                                <input type="number" id="kmUsado" class="w-full p-3 border rounded mb-4">
+                                <label class="block mb-1 text-xs font-bold text-gray-500">Km</label>
+                                <input type="number" id="kmUsado" class="w-full p-2 border rounded mb-2 text-sm">
                             </div>
                         </div>
                     </div>
 
                     <div class="flex gap-2 mt-4">
-                        <button type="button" onclick="prevStep(2)" class="w-1/3 bg-gray-300 text-gray-700 py-3 rounded font-bold">Volver</button>
-                        <button type="button" onclick="finalizar()" class="w-2/3 bg-green-600 text-white py-3 rounded hover:bg-green-700 transition font-bold"><i class="fab fa-whatsapp"></i> Enviar Consulta</button>
+                        <button type="button" onclick="prevStep(2)" class="w-1/3 bg-gray-200 text-gray-700 py-3 rounded font-bold hover:bg-gray-300">Volver</button>
+                        <button type="button" onclick="finalizar()" class="w-2/3 bg-green-600 text-white py-3 rounded hover:bg-green-700 transition font-bold shadow-lg flex justify-center items-center gap-2">
+                            <i class="fab fa-whatsapp"></i> Enviar a RG
+                        </button>
                     </div>
                 </div>
 
             </form>
         </div>
-        <p class="text-center text-xs text-gray-400 mt-6">Tus datos se guardan automáticamente para brindarte una mejor atención.</p>
+        <p class="text-center text-xs text-gray-400 mt-6 px-4">Tus datos están seguros. RG Automotores utiliza esta información únicamente para asesoramiento comercial.</p>
     </main>
 
     <script>
         // --- CONFIGURACIÓN ---
-        // Aquí iría la URL de tu Google Script (te explico cómo obtenerla abajo)
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymFIeQfUignRRoM5ERDBLPzO0oDqW9Bfgkrq1st099Xd0HetvNamHMeoLX0Q9Q-JMq/exec'; 
-        const MY_PHONE = '5492984572959'; // Tu número
+        // PEGA AQUÍ TU URL NUEVA SI LA CAMBIASTE, O USA LA QUE YA TENÍAS
+        const GOOGLE_SCRIPT_URL = 'TU_URL_DE_GOOGLE_SCRIPT_AQUI'; 
+        const MY_PHONE = '5492984572959'; 
         
-        // Estado del formulario
         let currentStep = 1;
-        let formData = {};
-
-        // Función al iniciar
+        
+        // Al cargar, recuperar o crear ID de sesión
         document.addEventListener('DOMContentLoaded', () => {
-            // Generar un ID único de sesión si no existe para rastrear al usuario
             if(!localStorage.getItem('rg_session_id')) {
-                localStorage.setItem('rg_session_id', 'RG-' + Date.now());
+                // Creamos un ID aleatorio simple
+                localStorage.setItem('rg_session_id', 'ID-' + Math.floor(Math.random() * 1000000) + '-' + Date.now());
             }
         });
 
@@ -141,21 +157,26 @@
             const div = document.getElementById('datosUsado');
             if (tiene) {
                 div.classList.remove('hidden');
+                // Auto-scroll suave hacia el campo de usado si es móvil
+                setTimeout(() => div.scrollIntoView({behavior: "smooth", block: "center"}), 100);
             } else {
                 div.classList.add('hidden');
             }
-            savePartialData(); // Guardar selección
+            savePartialData(); 
         }
 
         function nextStep(step) {
-            // Validaciones simples
+            // Validaciones Paso 1
             if (currentStep === 1) {
                 const nombre = document.getElementById('nombre').value;
                 const tel = document.getElementById('telefono').value;
-                if (!nombre || !tel) return alert('Por favor completa tu nombre y teléfono para continuar.');
+                if (!nombre || !tel) {
+                    alert('Por favor completa tu nombre y teléfono para poder contactarte.');
+                    return;
+                }
             }
 
-            // Ocultar actual, mostrar siguiente
+            // Transición
             document.getElementById(`step${currentStep}`).classList.remove('step-active');
             document.getElementById(`step${currentStep}`).classList.add('step-hidden');
             
@@ -164,10 +185,9 @@
             document.getElementById(`step${currentStep}`).classList.remove('step-hidden');
             document.getElementById(`step${currentStep}`).classList.add('step-active');
 
-            // Actualizar barra
             updateProgress();
             
-            // GUARDADO AUTOMÁTICO AL SISTEMA GOOGLE
+            // Guardar en Google Sheets (Actualizando fila si existe)
             savePartialData();
         }
 
@@ -185,40 +205,33 @@
             document.getElementById('progressBar').style.width = percent + '%';
         }
 
-        // --- MAGIA: GUARDAR DATOS PARCIALES EN GOOGLE ---
         function savePartialData() {
-            // Recolectar todo
             const data = {
-                sessionId: localStorage.getItem('rg_session_id'),
-                timestamp: new Date().toISOString(),
+                sessionId: localStorage.getItem('rg_session_id'), // Clave para no duplicar
                 nombre: document.getElementById('nombre').value,
                 telefono: document.getElementById('telefono').value,
                 marcaBuscada: document.getElementById('marca').value,
                 modeloBuscado: document.getElementById('modeloBusqueda').value,
                 anioBuscado: document.getElementById('anioBusqueda').value,
                 capital: document.getElementById('capital').value,
-                tieneUsado: document.querySelector('input[name="tieneUsado"]:checked')?.value || 'No especificado',
+                tieneUsado: document.querySelector('input[name="tieneUsado"]:checked')?.value || '',
                 modeloUsado: document.getElementById('modeloUsado').value,
                 anioUsado: document.getElementById('anioUsado').value,
                 kmUsado: document.getElementById('kmUsado').value
             };
 
-            console.log("Enviando datos a Google...", data);
-            
-            // Enviar a Google Sheets usando 'fetch' y 'no-cors' para evitar errores de navegador
             if(GOOGLE_SCRIPT_URL !== 'TU_URL_DE_GOOGLE_SCRIPT_AQUI') {
                 fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
-                }).catch(err => console.error('Error guardando en background', err));
+                }).catch(err => console.log('Guardando...'));
             }
         }
 
-        // --- ENVIAR A WHATSAPP ---
         function finalizar() {
-            savePartialData(); // Guardado final
+            savePartialData(); // Asegurar último guardado
 
             const nombre = document.getElementById('nombre').value;
             const marca = document.getElementById('marca').value;
@@ -228,20 +241,19 @@
             
             let msg = `Hola *RG Automotores*, soy ${nombre}. Completé el formulario web:\n\n`;
             msg += `🔍 *Busco:* ${marca} ${modelo}\n`;
-            msg += `💰 *Capital:* $${capital}\n`;
+            if(capital) msg += `💰 *Capital:* $${capital}\n`;
             
             if (tieneUsado === 'Si') {
                 const miAuto = document.getElementById('modeloUsado').value;
                 const miAnio = document.getElementById('anioUsado').value;
                 const miKm = document.getElementById('kmUsado').value;
-                msg += `🚗 *Entrego usado:* ${miAuto} (${miAnio}) con ${miKm}km\n`;
-            } else {
-                msg += `🚗 *Sin usado (Contado/Financiación)*\n`;
+                msg += `🚗 *Entrego usado:* ${miAuto} (${miAnio}) - ${miKm}km\n`;
+            } else if (tieneUsado === 'No') {
+                msg += `💵 *Operación de Contado / Financiación*\n`;
             }
 
-            msg += `\nEspero info. Gracias.`;
+            msg += `\nAguardo sus opciones. Gracias.`;
 
-            // Redirigir a WhatsApp
             window.location.href = `https://wa.me/${MY_PHONE}?text=${encodeURIComponent(msg)}`;
         }
     </script>

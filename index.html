@@ -2,129 +2,139 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RG Plan Ahorro - Cuotas Fijas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RG Plan Ahorro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Animaciones suaves */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .scale-in { animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
         .step-hidden { display: none; }
         .step-active { display: block; }
         
-        /* Colores del Flyer */
-        .bg-rg-dark { background-color: #1a1a1a; } /* Fondo oscuro */
-        .bg-rg-orange { background-color: #ff9100; } /* Naranja vibrante */
+        /* Colores RG */
+        .bg-rg-orange { background-color: #ff9100; }
         .text-rg-orange { color: #ff9100; }
         .border-rg-orange { border-color: #ff9100; }
         
-        /* Efectos Botón */
-        .btn-rg:hover { background-color: #e68200; transform: translateY(-1px); }
-        .btn-rg:active { transform: translateY(1px); }
+        /* Ajustes para inputs más compactos */
+        .input-compact { padding-top: 0.75rem; padding-bottom: 0.75rem; }
     </style>
 </head>
-<body class="bg-gray-900 font-sans text-gray-800 pb-10 min-h-screen">
+<body class="bg-gray-900 font-sans text-gray-800 h-screen w-screen overflow-hidden flex flex-col">
 
-    <header class="bg-gray-800 text-white p-6 shadow-lg text-center border-b-4 border-rg-orange">
-        <h1 class="text-3xl md:text-4xl font-extrabold tracking-wider uppercase">RG <span class="text-rg-orange">Automotores</span></h1>
-        <p class="text-lg font-light mt-2">Plan en <strong class="text-rg-orange">Cuotas Fijas y en Pesos</strong></p>
-        
-        <div class="mt-4 inline-flex items-center gap-2 bg-rg-orange text-white font-bold px-4 py-1 rounded-full shadow-lg text-sm uppercase">
-            <i class="fas fa-check-circle"></i> Sin Sorteos ni Licitación
-        </div>
+    <header class="bg-gray-800 text-white p-3 shadow-lg text-center border-b-2 border-rg-orange shrink-0 z-10">
+        <h1 class="text-2xl font-extrabold tracking-wider uppercase leading-none">RG <span class="text-rg-orange">Automotores</span></h1>
+        <p class="text-xs text-gray-400 mt-1 uppercase tracking-widest">Plan Cuotas Fijas</p>
     </header>
 
-    <main class="max-w-md mx-auto mt-8 p-4">
-        <div class="w-full bg-gray-700 rounded-full h-2 mb-6">
-            <div id="progressBar" class="bg-rg-orange h-2 rounded-full transition-all duration-300 shadow-[0_0_10px_#ff9100]" style="width: 33%"></div>
+    <main class="flex-grow flex flex-col justify-center px-4 relative bg-gray-900">
+        
+        <div class="w-full max-w-sm mx-auto bg-gray-700 rounded-full h-1.5 mb-4">
+            <div id="progressBar" class="bg-rg-orange h-1.5 rounded-full transition-all duration-300 shadow-[0_0_8px_#ff9100]" style="width: 33%"></div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 fade-in border border-gray-600">
+        <div class="bg-white rounded-xl shadow-2xl p-5 w-full max-w-sm mx-auto fade-in relative overflow-hidden flex flex-col justify-center min-h-[350px]">
+            
             <form id="planForm">
                 
                 <div id="step1" class="step-active">
-                    <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2 text-rg-orange">
-                            <i class="fas fa-user-check text-3xl"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-800">Tus Datos</h2>
-                        <p class="text-sm text-gray-500">Para enviarte la simulación.</p>
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-circle text-rg-orange text-4xl mb-1"></i>
+                        <h2 class="text-xl font-bold text-gray-800">Tus Datos</h2>
                     </div>
 
-                    <label class="block mb-2 text-sm font-bold text-gray-700">Nombre y Apellido</label>
-                    <input type="text" id="nombre" class="w-full p-4 border border-gray-300 rounded-xl mb-4 focus:outline-none focus:border-rg-orange focus:ring-2 focus:ring-orange-200 bg-gray-50" placeholder="Ej: Juan Pérez">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase ml-1">Nombre Completo</label>
+                            <input type="text" id="nombre" class="w-full input-compact px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-rg-orange focus:ring-1 focus:ring-orange-200 bg-gray-50 text-sm" placeholder="Tu nombre">
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase ml-1">Teléfono</label>
+                            <input type="tel" id="telefono" class="w-full input-compact px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-rg-orange focus:ring-1 focus:ring-orange-200 bg-gray-50 text-sm" placeholder="Ej: 2984...">
+                        </div>
+                    </div>
                     
-                    <label class="block mb-2 text-sm font-bold text-gray-700">Teléfono / WhatsApp</label>
-                    <input type="tel" id="telefono" class="w-full p-4 border border-gray-300 rounded-xl mb-6 focus:outline-none focus:border-rg-orange focus:ring-2 focus:ring-orange-200 bg-gray-50" placeholder="Ej: 2984...">
-                    
-                    <button type="button" onclick="nextStep(2)" class="w-full bg-rg-orange text-white py-4 rounded-xl font-bold text-lg shadow-lg btn-rg transition">
+                    <button type="button" onclick="nextStep(2)" class="mt-6 w-full bg-rg-orange text-white py-3 rounded-lg font-bold shadow-md hover:bg-orange-600 transition active:scale-95">
                         Siguiente <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
 
                 <div id="step2" class="step-hidden">
-                    <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 text-green-600">
-                            <i class="fas fa-money-bill-wave text-3xl"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-800">Tu Inversión</h2>
-                        <p class="text-sm text-gray-500">Cuota mínima desde $500.000</p>
+                    <div class="text-center mb-4">
+                        <i class="fas fa-hand-holding-dollar text-green-600 text-4xl mb-1"></i>
+                        <h2 class="text-xl font-bold text-gray-800">Tu Inversión</h2>
                     </div>
                     
-                    <label class="block mb-2 text-sm font-bold text-gray-700">¿Qué cuota mensual te queda cómoda?</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-4 text-gray-500 font-bold">$</span>
-                        <input type="number" id="cuota" class="w-full p-4 pl-8 border border-gray-300 rounded-xl mb-2 focus:outline-none focus:border-rg-orange focus:ring-2 focus:ring-orange-200 bg-gray-50 text-lg font-bold" placeholder="500000">
+                    <label class="text-xs font-bold text-gray-500 uppercase ml-1">Cuota Mensual Deseada</label>
+                    <div class="relative mb-1">
+                        <span class="absolute left-4 top-3 text-gray-500 font-bold">$</span>
+                        <input type="number" id="cuota" class="w-full py-3 pl-8 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:border-rg-orange focus:ring-1 focus:ring-orange-200 bg-gray-50 text-lg font-bold text-gray-800" placeholder="500000">
                     </div>
-                    <p class="text-xs text-orange-600 mb-6 font-semibold">* Gastos administrativos no incluidos</p>
+                    <p class="text-[10px] text-orange-600 mb-6 text-center">*Gastos administrativos no incluidos</p>
 
-                    <div class="flex gap-3">
-                        <button type="button" onclick="prevStep(1)" class="w-1/3 bg-gray-200 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-300 transition">Volver</button>
-                        <button type="button" onclick="nextStep(3)" class="w-2/3 bg-gray-800 text-white py-3 rounded-xl font-bold hover:bg-gray-900 transition shadow-lg">Siguiente</button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="prevStep(1)" class="w-1/3 bg-gray-100 text-gray-500 py-3 rounded-lg font-bold hover:bg-gray-200 text-sm">Volver</button>
+                        <button type="button" onclick="nextStep(3)" class="w-2/3 bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-900 shadow-md text-sm">Siguiente</button>
                     </div>
                 </div>
 
                 <div id="step3" class="step-hidden">
-                    <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-600">
-                            <i class="fas fa-car text-3xl"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-800">El Auto</h2>
-                        <p class="text-sm text-gray-500">¿Qué vehículo estás buscando?</p>
+                    <div class="text-center mb-4">
+                        <i class="fas fa-car text-blue-600 text-4xl mb-1"></i>
+                        <h2 class="text-xl font-bold text-gray-800">El Auto</h2>
                     </div>
                     
-                    <label class="block mb-2 text-sm font-bold text-gray-700">Modelo de Interés</label>
-                    <input type="text" id="modelo" class="w-full p-4 border border-gray-300 rounded-xl mb-6 focus:outline-none focus:border-rg-orange focus:ring-2 focus:ring-orange-200 bg-gray-50" placeholder="Ej: Gol, Hilux, Versa...">
+                    <label class="text-xs font-bold text-gray-500 uppercase ml-1">Modelo Buscado</label>
+                    <input type="text" id="modelo" class="w-full py-3 px-4 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-rg-orange bg-gray-50 text-sm" placeholder="Ej: Gol, Hilux...">
 
-                    <div class="bg-gray-100 p-4 rounded-lg mb-6 text-sm text-gray-600 space-y-2 border border-gray-200">
-                        <p class="font-bold text-gray-800 mb-2">Beneficios del Plan:</p>
-                        <p><i class="fas fa-check text-rg-orange mr-2"></i> Retirá cuota 4 (con 50%)</p>
-                        <p><i class="fas fa-check text-rg-orange mr-2"></i> Retirá cuota 8 (con 30%)</p>
-                        <p><i class="fas fa-check text-rg-orange mr-2"></i> Retirá cuota 12 (con 20%)</p>
+                    <div class="bg-gray-50 p-3 rounded border border-gray-100 mb-5">
+                        <p class="text-xs font-bold text-gray-400 uppercase mb-1 text-center">Beneficios Confirmados:</p>
+                        <div class="flex justify-between text-[11px] text-gray-600 font-medium">
+                            <span><i class="fas fa-check text-rg-orange"></i> Cuota 4</span>
+                            <span><i class="fas fa-check text-rg-orange"></i> Cuota 8</span>
+                            <span><i class="fas fa-check text-rg-orange"></i> Cuota 12</span>
+                        </div>
                     </div>
 
-                    <div class="flex gap-3">
-                        <button type="button" onclick="prevStep(2)" class="w-1/3 bg-gray-200 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-300 transition">Volver</button>
-                        <button type="button" onclick="finalizar()" class="w-2/3 bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition shadow-lg flex justify-center items-center gap-2 text-lg">
-                            <i class="fab fa-whatsapp"></i> Consultar
+                    <div class="flex gap-2">
+                        <button type="button" onclick="prevStep(2)" class="w-1/3 bg-gray-100 text-gray-500 py-3 rounded-lg font-bold hover:bg-gray-200 text-sm">Volver</button>
+                        <button type="button" onclick="finalizar()" class="w-2/3 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 shadow-md transition transform active:scale-95 text-sm">
+                            FINALIZAR
                         </button>
                     </div>
                 </div>
-
             </form>
+
+            <div id="successMessage" class="hidden absolute inset-0 bg-white flex flex-col items-center justify-center text-center p-4 scale-in z-20">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                    <i class="fas fa-check text-5xl text-green-500"></i>
+                </div>
+                <h2 class="text-2xl font-extrabold text-gray-800 mb-2">¡Recibido!</h2>
+                <p class="text-gray-500 text-sm mb-6">Gracias <span id="nombreCliente" class="font-bold text-gray-700"></span>.<br>Ya estamos analizando tu perfil.<br>Te escribiremos en breve.</p>
+                <div class="text-xs text-gray-400 bg-gray-50 px-4 py-2 rounded-full">
+                    RG Automotores - Gral Roca
+                </div>
+            </div>
+
         </div>
-        
-        <div class="text-center mt-8 space-y-1">
-            <p class="text-gray-400 text-sm"><i class="fas fa-map-marker-alt text-rg-orange"></i> Italia 1571, Gral. Roca</p>
-            <p class="text-gray-600 text-xs">RG Automotores © 2025</p>
+
+        <div class="text-center mt-6 mb-2 shrink-0">
+            <p class="text-gray-500 text-xs flex justify-center items-center gap-2">
+                <i class="fas fa-lock text-[10px]"></i> Tus datos están protegidos
+            </p>
         </div>
     </main>
 
     <script>
         // --- CONFIGURACIÓN ---
-        // Pega aquí la URL de tu NUEVA implementación
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8sSWswo-XqXZm6et2RMR2DlBsILzCUQ63EUoor1ropkbPNgv6hkG-YO94yFEmuOZQ/exec'; 
-        const MY_PHONE = '5492984572959'; 
+        const GOOGLE_SCRIPT_URL = 'TU_URL_DE_GOOGLE_SCRIPT_AQUI'; 
         
         let currentStep = 1;
         
@@ -135,7 +145,6 @@
         });
 
         function nextStep(step) {
-            // Validaciones
             if (currentStep === 1) {
                 const nombre = document.getElementById('nombre').value;
                 const tel = document.getElementById('telefono').value;
@@ -145,7 +154,6 @@
                 const cuota = document.getElementById('cuota').value;
                 if (!cuota) return alert('Por favor indica una cuota aproximada.');
             }
-
             transitionToStep(step);
             saveData();
         }
@@ -160,7 +168,6 @@
             currentStep = step;
             document.getElementById(`step${currentStep}`).classList.remove('step-hidden');
             document.getElementById(`step${currentStep}`).classList.add('step-active');
-            
             let percent = (currentStep / 3) * 100;
             document.getElementById('progressBar').style.width = percent + '%';
         }
@@ -174,7 +181,7 @@
                 modelo: document.getElementById('modelo').value
             };
 
-            if(GOOGLE_SCRIPT_URL !== 'TU_URL_DE_GOOGLE_SCRIPT_AQUI') {
+            if(GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycby8sSWswo-XqXZm6et2RMR2DlBsILzCUQ63EUoor1ropkbPNgv6hkG-YO94yFEmuOZQ/exec') {
                 fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
@@ -185,21 +192,18 @@
         }
 
         function finalizar() {
+            // 1. Guardar última vez los datos
             saveData();
 
+            // 2. Personalizar el mensaje final
             const nombre = document.getElementById('nombre').value;
-            const cuota = document.getElementById('cuota').value;
-            const modelo = document.getElementById('modelo').value;
-            
-            let msg = `Hola *RG Automotores*, soy ${nombre}.\n`;
-            msg += `Vi el anuncio del *Plan de Ahorro en Cuotas Fijas*.\n\n`;
-            if(modelo) msg += `🚘 *Me interesa:* ${modelo}\n`;
-            if(cuota) msg += `💸 *Cuota aprox:* $${cuota}\n\n`;
-            msg += `Quisiera más info para avanzar.`;
+            document.getElementById('nombreCliente').textContent = nombre.split(' ')[0]; // Solo el primer nombre
 
-            window.location.href = `https://wa.me/${MY_PHONE}?text=${encodeURIComponent(msg)}`;
+            // 3. Ocultar formulario y mostrar éxito
+            document.getElementById('planForm').classList.add('hidden');
+            document.getElementById('progressBar').parentElement.classList.add('hidden'); // Ocultar barra
+            document.getElementById('successMessage').classList.remove('hidden');
         }
     </script>
 </body>
 </html>
-
